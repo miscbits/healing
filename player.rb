@@ -11,11 +11,24 @@ class Player
     @frames = Gosu::Image.load_tiles 'media/Fumiko.png', 24, 32
     @x, @y = x, y
 
+    left  = Gosu::Image.load_tiles('media/run-left.png', 24, 32)
+    up    = Gosu::Image.load_tiles('media/run-up.png', 24, 32)
+    down  = Gosu::Image.load_tiles('media/run-down.png', 24, 32)
+    right = Gosu::Image.load_tiles('media/run-right.png', 24, 32)
+
+
     @move = {
-      :left  => Animation.new(@frames[20..25], 0.1),
-      :up    => Animation.new(Gosu::Image.load_tiles('media/run-up.png', 24, 32), 0.1),
-      :down  => Animation.new(@frames[0..3], 0.2),
-      :right => Animation.new(@frames[0..287], 0.2)
+      :left  => Animation.new(left[1...4], 0.1),
+      :up    => Animation.new(up, 0.1),
+      :down  => Animation.new(down[1...5], 0.12),
+      :right => Animation.new(right[1...4], 0.1)
+    }
+
+    @rest = {
+      :left  => left[0],
+      :up    => up[0],
+      :down  => down[0],
+      :right => right[0]
     }
 
     @movements = {:left => -1.0, :right => 1.0, :up => -1.0, :down => 1.0}
@@ -32,9 +45,9 @@ class Player
 
   def draw
     if @moving
-      @move[@facing].start.draw @x, @y, 1
+      @move[@facing].start.draw @x, @y, 1, 2, 2
     else
-      @move[@facing].stop.draw @x, @y, 1
+      @rest[@facing].draw @x, @y, 1, 2, 2
     end
   end
 
