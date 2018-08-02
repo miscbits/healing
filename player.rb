@@ -2,20 +2,23 @@ require_relative 'animation'
 
 class Player
   attr_reader :life
+  attr_reader :moving
+  attr_reader :facing
+  attr_reader :x
+  attr_reader :y
 
   def initialize(x, y)
     @frames = Gosu::Image.load_tiles 'media/Fumiko.png', 24, 32
     @x, @y = x, y
-    print @frames
 
     @move = {
-      :left  => Animation.new(@frames[0..5], 0.1),
-      :up    => Animation.new(@frames[0..5], 0.2),
+      :left  => Animation.new(@frames[20..25], 0.1),
+      :up    => Animation.new(Gosu::Image.load_tiles('media/run-up.png', 24, 32), 0.1),
       :down  => Animation.new(@frames[0..3], 0.2),
       :right => Animation.new(@frames[0..287], 0.2)
     }
 
-    @movements = {:left => -1.0, :right => 2.0, }
+    @movements = {:left => -1.0, :right => 1.0, :up => -1.0, :down => 1.0}
 
     @moving = false
     @facing = :left
@@ -36,9 +39,14 @@ class Player
   end
 
   def move(direction)
-    @x += @movements[direction]
-    @x %= 640
-    
+    if direction == :up or direction == :down
+      @y += @movements[direction]
+      @y %= 480
+    else
+      @x += @movements[direction]
+      @x %= 640
+    end
+
     @facing = direction
     @moving = true if @moving != true
   end
