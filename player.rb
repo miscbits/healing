@@ -1,4 +1,5 @@
 require_relative 'animation'
+require_relative 'map'
 
 class Player
   attr_reader :life
@@ -6,8 +7,11 @@ class Player
   attr_reader :facing
   attr_reader :x
   attr_reader :y
+  attr_reader :tile
 
   def initialize(x, y)
+    @map = Map.new
+    @tile = 0
     @frames = Gosu::Image.load_tiles 'media/Fumiko.png', 24, 32
     @x, @y = x, y
 
@@ -31,7 +35,7 @@ class Player
       :right => right[0]
     }
 
-    @movements = {:left => -1.0, :right => 1.0, :up => -1.0, :down => 1.0}
+    @movements = {:left => -3.0, :right => 3.0, :up => -3.0, :down => 3.0}
 
     @moving = false
     @facing = :left
@@ -44,20 +48,42 @@ class Player
   
 
   def draw
+    @map.draw @tile
     if @moving
-      @move[@facing].start.draw @x, @y, 1, 2, 2
+      @move[@facing].start.draw @x, @y, 1, 2, 1
     else
-      @rest[@facing].draw @x, @y, 1, 2, 2
+      @rest[@facing].draw @x, @y, 1, 2, 1
     end
   end
 
   def move(direction)
-    if direction == :up or direction == :down
+    if direction == :up and @y <= 5 and @tile <= 3
+      @y = 5
+    elsif direction == :down and @y >= 507 and @tile >= 11
+      @y = 507
+    elsif direction == :left and @x <= 5 and @tile % 4 == 0
+      @x = 5
+    elsif direction == :right and @x >= 507 and @tile % 4 == 3
+      @x = 507
+    elsif direction == :up or direction == :down
       @y += @movements[direction]
-      @y %= 480
-    else
+      if @y >= 512
+        @tile+=4
+        @y = 5
+      elsif @y <= 0
+        @tile-=4
+        @y = 507
+      end
+    elsif direction == :left or direction == :right
       @x += @movements[direction]
-      @x %= 640
+      if @x >= 512
+        @tile+=1
+        @x = 5
+      elsif @x <= 0
+        @tile-=1
+        @x = 507
+      end
+      
     end
 
     @facing = direction

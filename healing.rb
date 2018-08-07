@@ -4,10 +4,12 @@ require_relative 'player'
 class Healing < Gosu::Window
 
   def initialize
-    super 640, 480
+    super 512, 512
     self.caption = "Healing"
 
-    @player = Player.new 320, 240
+    @font = Gosu::Font.new(20)
+
+    @player = Player.new 256, 256
 
     @key = {kb_left: Gosu::KbLeft,
             kb_right: Gosu::KbRight,
@@ -36,6 +38,10 @@ class Healing < Gosu::Window
 
   def draw
     @player.draw
+    @font.draw "tile: #{@player.tile}", 10, 10, 3, 1.0, 1.0, Gosu::Color::YELLOW
+    @font.draw "direction: #{@player.facing}", 10, 40, 3, 1.0, 1.0, Gosu::Color::YELLOW
+    @font.draw "x: #{@player.x}", 10, 70, 3, 1.0, 1.0, Gosu::Color::YELLOW
+    @font.draw "y: #{@player.y}", 10, 100, 3, 1.0, 1.0, Gosu::Color::YELLOW
   end
 
   def button_down(id)
